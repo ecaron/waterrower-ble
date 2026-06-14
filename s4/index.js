@@ -1,7 +1,7 @@
 /* eslint quote-props: ["error", "consistent-as-needed"] */
 const { EventEmitter } = require('events')
-const SerialPort = require('serialport')
-const Readline = require('@serialport/parser-readline')
+const { SerialPort } = require('serialport')
+const { ReadlineParser } = require('@serialport/parser-readline')
 const debug = require('debug')('waterrower-game:S4')
 
 // MESSAGE FLOW
@@ -223,13 +223,13 @@ S4.prototype.findPort = async function () {
 
 S4.prototype.open = async function (comName) {
   const self = this
-  const port = new SerialPort(comName, { baudRate: 19200, autoOpen: false, lock: false })
+  const port = new SerialPort({ path: comName, baudRate: 19200, autoOpen: false, lock: false })
   port.open(function (err) {
     if (err) {
       process.exit(err)
     }
     self.port = port
-    const parser = port.pipe(new Readline({ delimiter: '\r\n' }))
+    const parser = port.pipe(new ReadlineParser({ delimiter: '\r\n' }))
     parser.on('data', self.readAndDispatch)
     // we can only write one message every .8s
     self.writer = setInterval(self.flushNext, 800)

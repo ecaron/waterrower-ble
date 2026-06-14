@@ -1,4 +1,4 @@
-const usb = require('usb')
+const { usb } = require('usb')
 const debug = require('debug')('waterrower-game:usb')
 
 const UsbPeripheral = function () {
